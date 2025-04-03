@@ -44,14 +44,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sanvalero.imagefilters.MainController">
+<VBox fx:id="rootVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sanvalero.imagefilters.MainController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
         <Menu mnemonicParsing="false" text="Open">
           <items>
-            <MenuItem fx:id="openSingleImageMenuBtn" mnemonicParsing="false" text="Single image..." />
-            <MenuItem fx:id="openMultipleImagesMenuBtn" mnemonicParsing="false" text="Multiple images..." />
+            <MenuItem fx:id="openSingleImageMenuBtn" mnemonicParsing="false" text="Single image..." onAction="#openSingleImage" />
+            <MenuItem fx:id="openMultipleImagesMenuBtn" mnemonicParsing="false" text="Multiple images..." onAction="#openMultipleImages"/>
                   <MenuItem fx:id="openVideoMenuBtn" disable="true" mnemonicParsing="false" text="Video..." />
           </items>
         </Menu>
