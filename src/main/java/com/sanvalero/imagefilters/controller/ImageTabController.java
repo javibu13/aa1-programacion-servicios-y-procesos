@@ -4,7 +4,9 @@ import com.sanvalero.imagefilters.filter.BrightnessFilter;
 import com.sanvalero.imagefilters.filter.Filter;
 import com.sanvalero.imagefilters.filter.GrayscaleFilter;
 import com.sanvalero.imagefilters.filter.InvertColorsFilter;
+import com.sanvalero.imagefilters.report.ReportManager;
 import com.sanvalero.imagefilters.task.FilterTask;
+import com.sanvalero.imagefilters.task.ReportTask;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +67,7 @@ public class ImageTabController implements Initializable {
     @FXML
     private ChoiceBox<String> tabFilter3;
 
+    private ReportManager reportManager;
     private File selectedFile; // The file selected to be opened in the tab
     private Boolean applyFiltersOnInitialize; // Flag to indicate if filters should be applied on initialization
     private List<Filter> filterList = new ArrayList<>(); // List of filters to be applied to the image
@@ -72,7 +75,8 @@ public class ImageTabController implements Initializable {
 
     private FilterTask filterTask; // Task to apply the filters to the image
 
-    public ImageTabController(File selectedFile, Boolean applyFiltersOnInitialize, List<Filter> filterList) {
+    public ImageTabController(ReportManager reportManager, File selectedFile, Boolean applyFiltersOnInitialize, List<Filter> filterList) {
+        this.reportManager = reportManager;
         this.selectedFile = selectedFile;
         this.filterList = filterList;
         this.applyFiltersOnInitialize = applyFiltersOnInitialize;
@@ -121,10 +125,11 @@ public class ImageTabController implements Initializable {
                 break;
                 case SUCCEEDED:
                 logger.info("Filters applied successfully.");
+                createReport(); // Create the report after the filters are applied
                 tabImageEdited.setImage(SwingFXUtils.toFXImage(filterTask.getValue(), null));
                 alert = new Alert(Alert.AlertType.INFORMATION, "Filters applied successfully.");
                 alert.showAndWait();
-                reactivateButtons();
+                reactivateButtons(); // Reactivate the buttons after the filters are applied
                 break;
                 case FAILED:
                 logger.error("Failed to apply filters: " + filterTask.getException().getMessage());
@@ -144,6 +149,29 @@ public class ImageTabController implements Initializable {
         });
         // Start the task in a new thread
         new Thread(filterTask).start();
+    }
+
+    private void createReport() {
+        // Generate the report in a new thread
+        ReportTask reportTask = new ReportTask(reportManager, LocalDateTime.now(), selectedFile.getAbsolutePath(), filterList);
+        reportTask.stateProperty().addListener((obs2, oldState2, newState2) -> {
+            Alert alert2 = null;
+            switch (newState2) {
+                case FAILED:
+                logger.error("Failed to generate report: " + reportTask.getException().getMessage());
+                alert2 = new Alert(Alert.AlertType.ERROR, "Failed to generate report: " + reportTask.getException().getMessage());
+                alert2.showAndWait();
+                break;
+                case CANCELLED:
+                logger.warn("Report task was cancelled.");
+                alert2 = new Alert(Alert.AlertType.WARNING, "Report task was cancelled.");
+                alert2.showAndWait();
+                break;
+                default:
+                break;
+            }
+        });
+        new Thread(reportTask).start();
     }
 
     private void reactivateButtons() {

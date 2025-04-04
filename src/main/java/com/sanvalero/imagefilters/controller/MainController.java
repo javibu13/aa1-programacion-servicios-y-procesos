@@ -4,6 +4,7 @@ import com.sanvalero.imagefilters.filter.Filter;
 import com.sanvalero.imagefilters.filter.GrayscaleFilter;
 import com.sanvalero.imagefilters.filter.InvertColorsFilter;
 import com.sanvalero.imagefilters.filter.BrightnessFilter;
+import com.sanvalero.imagefilters.report.ReportManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,8 @@ import javafx.stage.FileChooser;
 
 public class MainController implements Initializable {
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
+
+    private ReportManager reportManager = new ReportManager();
 
     @FXML
     private VBox rootVBox;
@@ -119,7 +122,7 @@ public class MainController implements Initializable {
         logger.info("Creating image tab for: " + selectedFile.getName());
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("imageTab.fxml"));
-            ImageTabController imageTabController = new ImageTabController(selectedFile, applyFilters, filterList);
+            ImageTabController imageTabController = new ImageTabController(reportManager, selectedFile, applyFilters, filterList);
             fxmlLoader.setController(imageTabController);
             Tab newTab = new Tab(selectedFile.getName(), fxmlLoader.load());
             newTab.setUserData(imageTabController); // Store the controller in the tab for later access
