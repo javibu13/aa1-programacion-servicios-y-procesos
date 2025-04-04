@@ -18,7 +18,7 @@ guardar en el disco. Además, la aplicación permitirá visualizar la versión p
 
 ✅ 3. La aplicación permitirá seleccionar el path donde guardar las imágenes procesadas. Habrá uno por defecto. En ningún caso, se eliminará la imagen original. La nueva imagen con los filtros, tendrá por defecto un nombre nuevo.
 
-⬜ 4. La aplicación permitirá la ejecución de varios filtros por imagen de manera secuencial y en una misma interacción. Por ejemplo, aumentar el brillo y reducir el contraste de una imagen de manera consecutiva, mientras que, de manera concurrente, otra imagen es convertida a escala de grises. Todo esto se hará sin volver a abrir la imagen, que ya estará previamente cargada en memoria.
+✅ 4. La aplicación permitirá la ejecución de varios filtros por imagen de manera secuencial y en una misma interacción. Por ejemplo, aumentar el brillo y reducir el contraste de una imagen de manera consecutiva, mientras que, de manera concurrente, otra imagen es convertida a escala de grises. Todo esto se hará sin volver a abrir la imagen, que ya estará previamente cargada en memoria.
 
 ⬜ 5. Se mantendrá un historial de todas las imágenes procesadas por la aplicación, así como los filtros realizados en cada una de ellas. Este fichero se podrá consultar desde la interfaz de usuario y se mostrará en un componente de JavaFX. Además, al iniciar la aplicación se mostrará un SplashScreen. También habrá una barra de progreso que mostrará el porcentaje de procesamiento de la imagen, y finalmente se mostrará un pop-up indicando la finalización del filtro en una determinada imagen. Si la tarea es cancelada o se produce un error también se deberá mostrar mediante un pop-up.
 
