@@ -203,13 +203,13 @@ public class ImageTabController implements Initializable {
         );
         // Set the initial file name and directory for the file chooser
         fileChooser.setInitialFileName(
-            selectedFile.getName() + 
+            selectedFile.getName().split("\\.(?=[^\\.]+$)")[0] + 
             "_" + 
             LocalDateTime.now()
-                .toString()
-                .replace(":", "-")
-                .replace("-", "")
-                .replace("T", "_").split("\\.")[0]
+            .toString()
+            .replace(":", "-")
+            .replace("-", "")
+            .replace("T", "_").split("\\.")[0]
         );
         File defaultDirectory = new File(defaultFilePath);
         if (defaultDirectory.exists() && defaultDirectory.isDirectory()) {
