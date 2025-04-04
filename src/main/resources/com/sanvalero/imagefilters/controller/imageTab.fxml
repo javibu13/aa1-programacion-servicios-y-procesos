@@ -33,7 +33,7 @@
             </VBox>
             <HBox alignment="TOP_RIGHT" layoutX="22.0" layoutY="298.0" prefHeight="100.0" prefWidth="200.0" spacing="11.0">
                <children>
-                  <Button fx:id="tabApplyBtn" minWidth="65.0" mnemonicParsing="false" text="Apply" disable="true" />
+                  <Button fx:id="tabApplyBtn" minWidth="65.0" mnemonicParsing="false" text="Apply" onAction="#applyNewFilters" disable="true" />
                   <Button fx:id="tabUndoBtn" layoutX="416.0" layoutY="10.0" minWidth="65.0" mnemonicParsing="false" text="Undo" disable="true" />
                   <Button fx:id="tabRedoBtn" layoutX="417.0" layoutY="10.0" minWidth="65.0" mnemonicParsing="false" text="Redo" disable="true" />
                   <Button fx:id="tabSaveBtn" layoutX="419.0" layoutY="10.0" minWidth="65.0" mnemonicParsing="false" text="Save" onAction="#saveImage" disable="true" />
