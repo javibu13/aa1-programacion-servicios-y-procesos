@@ -52,12 +52,18 @@
           <items>
             <MenuItem fx:id="openSingleImageMenuBtn" mnemonicParsing="false" onAction="#openSingleImage" text="Single image..." />
             <MenuItem fx:id="openMultipleImagesMenuBtn" mnemonicParsing="false" onAction="#openMultipleImages" text="Multiple images..." />
+            <MenuItem fx:id="openImagesFromFolderMenuBtn" mnemonicParsing="false" onAction="#openImagesFromFolder" text="Folder..." />
                   <MenuItem fx:id="openVideoMenuBtn" disable="true" mnemonicParsing="false" text="Video..." />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Edit">
           <items>
-            <MenuItem fx:id="editPreferencesMenuBtn" mnemonicParsing="false" text="Preferences" />
+                  <Menu mnemonicParsing="false" text="Modify">
+                    <items>
+                      <MenuItem fx:id="editModifyDefaultPathMenuBtn" mnemonicParsing="false" onAction="#modifyDefaultFilePath" text="Default save path of opened tabs" />
+                    </items>
+                  </Menu>
+            <MenuItem fx:id="editPreferencesMenuBtn" disable="true" mnemonicParsing="false" text="Preferences" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Help">

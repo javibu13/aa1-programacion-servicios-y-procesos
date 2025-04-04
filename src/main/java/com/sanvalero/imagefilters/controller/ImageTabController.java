@@ -73,6 +73,7 @@ public class ImageTabController implements Initializable {
         this.selectedFile = selectedFile;
         this.filterList = filterList;
         this.applyFiltersOnInitialize = applyFiltersOnInitialize;
+        this.defaultFilePath = selectedFile.getParent(); // Set the default file path to the directory of the selected file
     }
 
     @Override
@@ -184,6 +185,8 @@ public class ImageTabController implements Initializable {
         }
     }
 
+    // TODO: Use this method to set the default file path for saving images from the main controller
+    // This method can be called from the main controller to set the default file path for saving images
     public void updateDefaultFilePath(String newPath) {
         this.defaultFilePath = newPath;
         logger.info("Default file path updated to: " + newPath);

@@ -22,6 +22,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
 public class MainController implements Initializable {
@@ -85,6 +86,34 @@ public class MainController implements Initializable {
             }
         }
     }
+
+    @FXML
+    private void openImagesFromFolder(ActionEvent event) {
+        logger.info("Opening images from folder...");
+        // Create a FileChooser to select a folder
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Select Folder");
+        File selectedDirectory = directoryChooser.showDialog(rootVBox.getScene().getWindow());
+
+        if (selectedDirectory != null) {
+            logger.info("Selected folder: " + selectedDirectory.getAbsolutePath());
+            // List all image files in the selected directory
+            File[] imageFiles = selectedDirectory.listFiles((dir, name) -> {
+                return name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".bmp");
+            });
+
+            if (imageFiles != null && imageFiles.length > 0) {
+                logger.info("Found " + imageFiles.length + " image(s) in the folder.");
+                List<Filter> filterList = getSelectedFilters();
+                for (File imageFile : imageFiles) {
+                    logger.info("Opening image: " + imageFile.getAbsolutePath());
+                    createImageTab(imageFile, true, filterList);
+                }
+            } else {
+                logger.info("No image files found in the folder.");
+            }
+        }
+    }
     
     private void createImageTab(File selectedFile, Boolean applyFilters, List<Filter> filterList) {
         logger.info("Creating image tab for: " + selectedFile.getName());
@@ -92,7 +121,9 @@ public class MainController implements Initializable {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("imageTab.fxml"));
             ImageTabController imageTabController = new ImageTabController(selectedFile, applyFilters, filterList);
             fxmlLoader.setController(imageTabController);
-            imagesTabPane.getTabs().add(new Tab(selectedFile.getName(), fxmlLoader.load()));
+            Tab newTab = new Tab(selectedFile.getName(), fxmlLoader.load());
+            newTab.setUserData(imageTabController); // Store the controller in the tab for later access
+            imagesTabPane.getTabs().add(newTab);
             logger.info("Image tab created for: " + selectedFile.getName());
         } catch (Exception e) {
             logger.error("Error creating image tab: " + e.getMessage(), e);
@@ -127,5 +158,29 @@ public class MainController implements Initializable {
             }
         }
         return filterList;
+    }
+
+    @FXML
+    private void modifyDefaultFilePath(ActionEvent event) {
+        logger.info("Modifying default file path of opened tabs...");
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Select Default File Path");
+        File selectedDirectory = directoryChooser.showDialog(rootVBox.getScene().getWindow());
+
+        if (selectedDirectory != null) {
+            String defaultFilePath = selectedDirectory.getAbsolutePath();
+            logger.info("Set default file path to: " + defaultFilePath);
+            // Update the default file path for all opened tabs
+            for (Tab tab : imagesTabPane.getTabs()) {
+                logger.info(tab.toString());
+                ImageTabController imageTabController = (ImageTabController) tab.getUserData();
+                if (imageTabController != null) {
+                    logger.info("Updating default file path for tab: " + tab.getText());
+                    imageTabController.updateDefaultFilePath(defaultFilePath);
+                }
+            }
+        } else {
+            logger.warn("No directory selected for default file path.");
+        }
     }
 }
