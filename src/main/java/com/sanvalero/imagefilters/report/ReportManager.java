@@ -45,9 +45,11 @@ public class ReportManager {
         lock.lock(); // Lock the method to prevent concurrent access
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(logFile, true))) {
             // Example format: 2023-10-01T12:00:00|path/to/image.jpg|Grayscale,Invert Colors
-            String timestampedMessage = timestamp + "|" + imagePath + "|" + filters.toString()
-                                                                                    .replace("[", "")
-                                                                                    .replace("]", "");
+            String filtersString = filters.toString().replace("[", "").replace("]", "");
+            if (filtersString.isEmpty()) {
+                filtersString = "-";
+            }
+            String timestampedMessage = timestamp.toString() + "|" + imagePath + "|" + filtersString;
             // Write the message to the log file
             writer.write(timestampedMessage);
             writer.newLine();
