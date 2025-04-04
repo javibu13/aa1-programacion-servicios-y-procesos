@@ -44,14 +44,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="rootVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sanvalero.imagefilters.MainController">
+<VBox fx:id="rootVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
         <Menu mnemonicParsing="false" text="Open">
           <items>
-            <MenuItem fx:id="openSingleImageMenuBtn" mnemonicParsing="false" text="Single image..." onAction="#openSingleImage" />
-            <MenuItem fx:id="openMultipleImagesMenuBtn" mnemonicParsing="false" text="Multiple images..." onAction="#openMultipleImages"/>
+            <MenuItem fx:id="openSingleImageMenuBtn" mnemonicParsing="false" onAction="#openSingleImage" text="Single image..." />
+            <MenuItem fx:id="openMultipleImagesMenuBtn" mnemonicParsing="false" onAction="#openMultipleImages" text="Multiple images..." />
                   <MenuItem fx:id="openVideoMenuBtn" disable="true" mnemonicParsing="false" text="Video..." />
           </items>
         </Menu>
@@ -70,7 +70,7 @@
     </MenuBar>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
          <children>
-            <VBox alignment="TOP_CENTER" prefHeight="575.0" prefWidth="906.0">
+            <VBox alignment="TOP_CENTER" prefHeight="575.0" prefWidth="906.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="30.0">
                      <children>
@@ -109,7 +109,7 @@
                         <Insets left="30.0" />
                      </padding>
                   </HBox>
-                  <TabPane fx:id="imagesTabPane" prefHeight="475.0" prefWidth="686.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS" />
+                  <TabPane fx:id="imagesTabPane" prefHeight="475.0" prefWidth="686.0" tabClosingPolicy="ALL_TABS" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
          </children>

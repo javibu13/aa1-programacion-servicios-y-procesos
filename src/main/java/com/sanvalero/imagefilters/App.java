@@ -1,5 +1,7 @@
 package com.sanvalero.imagefilters;
 
+import com.sanvalero.imagefilters.controller.MainController;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +24,17 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         logger.info("Starting JavaFX application...");
-        scene = new Scene(loadFXML("main"), 900, 600);
+        // Load the FXML file
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("main.fxml"));
+        // Set the controller for the FXML file
+        MainController mainController = new MainController();
+        fxmlLoader.setController(mainController);
+        // Load the FXML file and set it as the scene
+        scene = new Scene(fxmlLoader.load(), 900, 600);
         stage.setScene(scene);
         stage.setTitle("Image Filters");
+        // Set the icon for the application
+        // stage.getIcons().add(new javafx.scene.image.Image(App.class.getResourceAsStream("icon.png")));
         stage.show();
         logger.info("JavaFX application started successfully.");
     }
