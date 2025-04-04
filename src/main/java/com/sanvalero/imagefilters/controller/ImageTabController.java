@@ -1,6 +1,9 @@
 package com.sanvalero.imagefilters.controller;
 
+import com.sanvalero.imagefilters.filter.BrightnessFilter;
 import com.sanvalero.imagefilters.filter.Filter;
+import com.sanvalero.imagefilters.filter.GrayscaleFilter;
+import com.sanvalero.imagefilters.filter.InvertColorsFilter;
 import com.sanvalero.imagefilters.task.FilterTask;
 
 import org.slf4j.Logger;
@@ -91,6 +94,16 @@ public class ImageTabController implements Initializable {
         }
     }
 
+    @FXML
+    private void applyNewFilters() {
+        logger.info("Applying new filters to the image...");
+        // Add the selected filters to the filter list
+        filterList = getSelectedFilters();
+        tabImageOriginal.setImage(tabImageEdited.getImage()); // Set the original image as the new image to apply filters to
+        tabImageEdited.setImage(null); // Clear the edited image
+        applyFilters();
+    }
+
     private void applyFilters() {
         logger.info("Applying filters to the image...");
         // Create a new FilterTask to apply the filters to the image
@@ -146,6 +159,36 @@ public class ImageTabController implements Initializable {
         tabUndoBtn.setDisable(true);
         tabRedoBtn.setDisable(true);
         tabSaveBtn.setDisable(true);
+    }
+
+    private List<Filter> getSelectedFilters() {
+        List<Filter> filterList = new ArrayList<>();
+        for (ChoiceBox<String> filter : tabFilterList) {
+            if (filter.getValue() != null && !filter.getValue().isEmpty()) {
+                logger.info("Selected filter: " + filter.getValue());
+                Boolean filterAdded = true;
+                switch (filter.getValue()) {
+                    case "Grayscale":
+                        filterList.add(new GrayscaleFilter());
+                        break;
+                    case "Invert Colors":
+                        filterList.add(new InvertColorsFilter());
+                        break;
+                    case "Brightness":
+                        filterList.add(new BrightnessFilter(20)); // Example value, replace with actual value
+                        break;
+                    default:
+                        filterAdded = false;
+                        logger.warn("Unknown filter: " + filter.getValue());
+                }
+                if (filterAdded) {
+                    logger.info("Filter added to list: " + filter.getValue());
+                } else {
+                    logger.warn("Filter not added to list: " + filter.getValue());
+                }
+            }
+        }
+        return filterList;
     }
 
     @FXML
