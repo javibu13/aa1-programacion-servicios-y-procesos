@@ -3,6 +3,7 @@ package com.sanvalero.imagefilters.controller;
 import com.sanvalero.imagefilters.filter.Filter;
 import com.sanvalero.imagefilters.filter.GrayscaleFilter;
 import com.sanvalero.imagefilters.filter.InvertColorsFilter;
+import com.sanvalero.imagefilters.App;
 import com.sanvalero.imagefilters.filter.BrightnessFilter;
 import com.sanvalero.imagefilters.report.ReportManager;
 
@@ -33,10 +34,14 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class MainController implements Initializable {
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
@@ -230,5 +235,20 @@ public class MainController implements Initializable {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
+    }
+
+    @FXML
+    public void showAboutWindow() {
+        Stage splashStage = new Stage();
+
+        Image splashImage = new Image(App.class.getResourceAsStream("splashScreen.png"));
+        ImageView splashImageView = new ImageView(splashImage);
+        splashImageView.setPreserveRatio(true);
+        splashImageView.setFitWidth(600);
+
+        StackPane splashLayout = new StackPane(splashImageView);
+        Scene splashScene = new Scene(splashLayout);
+        splashStage.setScene(splashScene);
+        splashStage.show();
     }
 }
