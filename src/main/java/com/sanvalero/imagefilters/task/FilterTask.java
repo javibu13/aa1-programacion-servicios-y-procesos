@@ -31,7 +31,7 @@ public class FilterTask extends Task<BufferedImage> {
         int processedPixels = 0;
         // Loop through the pixels of the image and apply the filters to each pixel
         for (int x = 0; x < prevImage.getWidth(); x++) {
-            Thread.sleep(10); // Simulate a delay for the task
+            Thread.sleep(5); // Simulate a delay for the task
             for (int y = 0; y < prevImage.getHeight(); y++) {
                 Color pixelColor = new Color(prevImage.getRGB(x, y));
                 // Apply each filter to the pixel
@@ -43,7 +43,7 @@ public class FilterTask extends Task<BufferedImage> {
                 // Update the progress of the task
                 updateProgress(processedPixels, imageSize);
                 // Update the message to show the progress in %
-                updateMessage("Processing " + (processedPixels * 100 / imageSize) + "% of the image...");
+                updateMessage((processedPixels * 100 / imageSize) + "%");
             }
         }
         // Update the progress of the task

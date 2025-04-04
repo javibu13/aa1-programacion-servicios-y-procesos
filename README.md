@@ -10,13 +10,13 @@ entrada y la devuelve modificada. Es obligatorio, utilizando la libería estánd
 - Aumento del brillo
 
 ### Requisitos obligatorios
-⬜ 1. La aplicación permitirá procesar varias imágenes al mismo tiempo. Específicamente: abrir una imagen y procesarla. Para forzar la
+✅ 1. La aplicación permitirá procesar varias imágenes al mismo tiempo. Específicamente: abrir una imagen y procesarla. Para forzar la
 concurrencia, se podrán introducir retardos en las tareas (Thread.sleep(ms)). Una vez que la imagen ha sido procesada, se podrá
 guardar en el disco. Además, la aplicación permitirá visualizar la versión previa y modificada de la imagen en la propia interfaz de usuario.
 
-⬜ 2. La aplicación permitirá procesar imágenes por lotes. Es decir, seleccionar una carpeta y todas las imágenes que se encuentren dentro se procesarán de manera concurrente.
+✅ 2. La aplicación permitirá procesar imágenes por lotes. Es decir, seleccionar una carpeta y todas las imágenes que se encuentren dentro se procesarán de manera concurrente.
 
-⬜ 3. La aplicación permitirá seleccionar el path donde guardar las imágenes procesadas. Habrá uno por defecto. En ningún caso, se eliminará la imagen original. La nueva imagen con los filtros, tendrá por defecto un nombre nuevo.
+✅ 3. La aplicación permitirá seleccionar el path donde guardar las imágenes procesadas. Habrá uno por defecto. En ningún caso, se eliminará la imagen original. La nueva imagen con los filtros, tendrá por defecto un nombre nuevo.
 
 ⬜ 4. La aplicación permitirá la ejecución de varios filtros por imagen de manera secuencial y en una misma interacción. Por ejemplo, aumentar el brillo y reducir el contraste de una imagen de manera consecutiva, mientras que, de manera concurrente, otra imagen es convertida a escala de grises. Todo esto se hará sin volver a abrir la imagen, que ya estará previamente cargada en memoria.
 
