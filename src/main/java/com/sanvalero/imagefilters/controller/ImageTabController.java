@@ -60,7 +60,6 @@ public class ImageTabController implements Initializable {
         tabFilterList = List.of(tabFilter1, tabFilter2, tabFilter3);
         // Load the image into the ImageView
         tabImageOriginal.setImage(new Image(selectedFile.toURI().toString()));
-        tabImageEdited.setImage(new Image(selectedFile.toURI().toString()));
         // Apply filters if the flag is set to true
         if (applyFiltersOnInitialize) {
             applyFilters();
