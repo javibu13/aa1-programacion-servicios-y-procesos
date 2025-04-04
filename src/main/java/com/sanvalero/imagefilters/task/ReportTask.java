@@ -1,7 +1,5 @@
 package com.sanvalero.imagefilters.task;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.time.LocalDateTime;
 import java.util.List;
 
