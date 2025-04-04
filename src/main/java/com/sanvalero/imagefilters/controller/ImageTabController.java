@@ -127,7 +127,7 @@ public class ImageTabController implements Initializable {
                 logger.info("Filters applied successfully.");
                 createReport(); // Create the report after the filters are applied
                 tabImageEdited.setImage(SwingFXUtils.toFXImage(filterTask.getValue(), null));
-                alert = new Alert(Alert.AlertType.INFORMATION, "Filters applied successfully.");
+                alert = new Alert(Alert.AlertType.INFORMATION, "Filters applied successfully to "+ selectedFile.getName() + ".");
                 alert.showAndWait();
                 reactivateButtons(); // Reactivate the buttons after the filters are applied
                 break;
@@ -177,8 +177,8 @@ public class ImageTabController implements Initializable {
     private void reactivateButtons() {
         tabApplyBtn.setDisable(false);
         // TODO: Set the undo and redo buttons to be enabled only if there are historical changes
-        tabUndoBtn.setDisable(false);
-        tabRedoBtn.setDisable(false);
+        // tabUndoBtn.setDisable(false);
+        // tabRedoBtn.setDisable(false);
         tabSaveBtn.setDisable(false);
     }
 
@@ -256,7 +256,6 @@ public class ImageTabController implements Initializable {
         }
     }
 
-    // TODO: Use this method to set the default file path for saving images from the main controller
     // This method can be called from the main controller to set the default file path for saving images
     public void updateDefaultFilePath(String newPath) {
         this.defaultFilePath = newPath;
