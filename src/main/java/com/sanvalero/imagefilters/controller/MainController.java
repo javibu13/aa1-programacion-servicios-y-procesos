@@ -9,22 +9,34 @@ import com.sanvalero.imagefilters.report.ReportManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 public class MainController implements Initializable {
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
@@ -185,5 +197,38 @@ public class MainController implements Initializable {
         } else {
             logger.warn("No directory selected for default file path.");
         }
+    }
+
+    @FXML
+    public void showReportTable() {
+        Stage stage = new Stage();
+        stage.setTitle("History Report");
+        TableView<ObservableList<String>> tableView = new TableView<>();
+        // Create columns for the table
+        String[] columnTitles = {"DateTime", "Path", "Filters"};
+        for (int i = 0; i < columnTitles.length; i++) {
+            final int colIndex = i;
+            TableColumn<ObservableList<String>, String> column = new TableColumn<>(columnTitles[i]);
+            column.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(colIndex)));
+            tableView.getColumns().add(column);
+        }
+
+        List<List<String>> reportEntries = reportManager.readFilterReportEntries();
+        ObservableList<ObservableList<String>> data = FXCollections.observableArrayList();
+        for (List<String> entry : reportEntries) {
+            ObservableList<String> row = FXCollections.observableArrayList(entry);
+            data.add(row);
+        }
+        tableView.setItems(data);
+        tableView.setPrefWidth(900);
+        tableView.setPrefHeight(600);
+
+        VBox root = new VBox(tableView);
+        root.setPadding(new Insets(10));
+        root.setPrefSize(900, 600);
+
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
 }

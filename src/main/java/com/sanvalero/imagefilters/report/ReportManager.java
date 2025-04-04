@@ -1,10 +1,14 @@
 package com.sanvalero.imagefilters.report;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -49,6 +53,26 @@ public class ReportManager {
             writer.newLine();
         } catch (IOException e) {
             System.err.println("Error writing message: " + e.getMessage());
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public List<List<String>> readFilterReportEntries() {
+        // Example: [["2023-10-01T12:00:00", "path/to/image.jpg", "Grayscale, Invert Colors"], ...]
+        lock.lock(); // Lock the method to prevent concurrent access
+        try (BufferedReader reader = new BufferedReader(new FileReader(logFile))) {
+            List<List<String>> entries = new ArrayList<>();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split("\\|");
+                List<String> entry = Arrays.asList(parts);
+                entries.add(entry);
+            }
+            return entries;
+        } catch (IOException e) {
+            System.err.println("Error reading log file: " + e.getMessage());
+            return new ArrayList<>();
         } finally {
             lock.unlock();
         }

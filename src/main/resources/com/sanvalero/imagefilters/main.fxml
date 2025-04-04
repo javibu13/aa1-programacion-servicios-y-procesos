@@ -68,8 +68,8 @@
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
-            <MenuItem fx:id="logReportMenuBtn" mnemonicParsing="false" text="Log report" />
-                  <MenuItem fx:id="aboutMenuBtn" mnemonicParsing="false" text="About" />
+            <MenuItem fx:id="logReportMenuBtn" mnemonicParsing="false" text="History report" onAction="#showReportTable" />
+            <MenuItem fx:id="aboutMenuBtn" mnemonicParsing="false" text="About" />
           </items>
         </Menu>
       </menus>
