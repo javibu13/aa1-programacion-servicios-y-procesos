@@ -35,6 +35,7 @@ public class FilterService extends Service<BufferedImage> {
 
     @Override
     protected Task<BufferedImage> createTask() {
+        logger.info("Creating FilterTask...");
         return new FilterTask(prevImage, filters);
     }
 }

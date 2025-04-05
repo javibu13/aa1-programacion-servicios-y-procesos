@@ -5,9 +5,7 @@ import com.sanvalero.imagefilters.filter.Filter;
 import com.sanvalero.imagefilters.filter.GrayscaleFilter;
 import com.sanvalero.imagefilters.filter.InvertColorsFilter;
 import com.sanvalero.imagefilters.report.ReportManager;
-// import com.sanvalero.imagefilters.task.FilterTask;
 import com.sanvalero.imagefilters.service.FilterService;
-import com.sanvalero.imagefilters.task.FilterTask;
 import com.sanvalero.imagefilters.task.ReportTask;
 
 import org.slf4j.Logger;
