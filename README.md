@@ -23,7 +23,7 @@ guardar en el disco. Además, la aplicación permitirá visualizar la versión p
 ✅ 5. Se mantendrá un historial de todas las imágenes procesadas por la aplicación, así como los filtros realizados en cada una de ellas. Este fichero se podrá consultar desde la interfaz de usuario y se mostrará en un componente de JavaFX. Además, al iniciar la aplicación se mostrará un SplashScreen. También habrá una barra de progreso que mostrará el porcentaje de procesamiento de la imagen, y finalmente se mostrará un pop-up indicando la finalización del filtro en una determinada imagen. Si la tarea es cancelada o se produce un error también se deberá mostrar mediante un pop-up.
 
 ### Requisitos opcionales
-⬜ 1. En lugar de la clase Task, se utilizará la clase Service para la ejecución concurrente. Además, se hará uso de las clases Executors y ExecutorService para crear un pool de threads.
+✅ 1. En lugar de la clase Task, se utilizará la clase Service para la ejecución concurrente. Además, se hará uso de las clases Executors y ExecutorService para crear un pool de threads.
 
 ⬜ 2. La aplicación dejará configurar un número máximo de imágenes procesadas de manera simultánea. De manera que si se excede ese
 número, el resto de imágenes quedarán encoladas y se procesarán a medida que se acaben procesamientos anteriores.
