@@ -28,11 +28,11 @@ guardar en el disco. Además, la aplicación permitirá visualizar la versión p
 ✅ 2. La aplicación dejará configurar un número máximo de imágenes procesadas de manera simultánea. De manera que si se excede ese
 número, el resto de imágenes quedarán encoladas y se procesarán a medida que se acaben procesamientos anteriores.
 
-⬜ 3. La aplicación permitirá deshacer los filtros aplicados o rehacerlos en el caso de haberlos deshecho.
+✅ 3. La aplicación permitirá deshacer los filtros aplicados o rehacerlos en el caso de haberlos deshecho.
 A elegir una de estas opciones:
 - Volver al estado original de la imagen
 - Volver al estado previo de la imagen
-- Volver a cualquier estado anterior de la imagen
+- (SELECTED) Volver a cualquier estado anterior de la imagen
 
 ⬜ 4. La aplicación también permite el uso de filtros en vídeos. En este caso, no hace falta mostrar los vídeos en la interfaz gráfica. Sólo seleccionar un vídeo, el filtro a utilizar y el vídeo procesado se guardará automáticamente en un directorio con un nombre distinto al vídeo original. Cada frame del vídeo se procesará por un hilo de manera concurrente.
 
