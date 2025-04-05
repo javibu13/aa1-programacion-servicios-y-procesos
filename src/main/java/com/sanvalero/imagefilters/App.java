@@ -8,13 +8,11 @@ import org.slf4j.LoggerFactory;
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
@@ -27,6 +25,7 @@ import java.io.IOException;
 public class App extends Application {
     private static final Logger logger = LoggerFactory.getLogger(App.class);
 
+    private static MainController mainController;
     private static Scene scene;
 
     @Override
@@ -64,7 +63,7 @@ public class App extends Application {
         // Load the FXML file
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("main.fxml"));
         // Set the controller for the FXML file
-        MainController mainController = new MainController();
+        mainController = new MainController();
         fxmlLoader.setController(mainController);
         // Load the FXML file and set it as the scene
         try {
@@ -88,6 +87,12 @@ public class App extends Application {
     private static Parent loadFXML(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
         return fxmlLoader.load();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        mainController.shutdownExecutorService();
+        super.stop();
     }
 
     public static void main(String[] args) {

@@ -61,6 +61,7 @@
                   <Menu mnemonicParsing="false" text="Modify">
                     <items>
                       <MenuItem fx:id="editModifyDefaultPathMenuBtn" mnemonicParsing="false" onAction="#modifyDefaultFilePath" text="Default save path of opened tabs" />
+                      <MenuItem fx:id="editModifyThreadNumberMenuBtn" mnemonicParsing="false" onAction="#modifyMaxThreadNumber" text="Max thread number" />
                     </items>
                   </Menu>
             <MenuItem fx:id="editPreferencesMenuBtn" disable="true" mnemonicParsing="false" text="Preferences" />

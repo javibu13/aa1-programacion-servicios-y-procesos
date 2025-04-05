@@ -10,15 +10,14 @@ import com.sanvalero.imagefilters.report.ReportManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -34,6 +33,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -41,12 +41,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 public class MainController implements Initializable {
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
     private ReportManager reportManager = new ReportManager();
+    private int maxThreadNumber = 2; // Default value, can be changed by the user
+    private ExecutorService executorService = Executors.newFixedThreadPool(maxThreadNumber);
 
     @FXML
     private VBox rootVBox;
@@ -61,6 +62,15 @@ public class MainController implements Initializable {
 
     @FXML
     private TabPane imagesTabPane;
+
+    public void shutdownExecutorService() {
+        if (executorService != null && !executorService.isShutdown()) {
+            executorService.shutdown();
+            logger.info("Executor service shut down.");
+        } else {
+            logger.warn("Executor service is already shut down or null.");
+        }
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -139,7 +149,7 @@ public class MainController implements Initializable {
         logger.info("Creating image tab for: " + selectedFile.getName());
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("imageTab.fxml"));
-            ImageTabController imageTabController = new ImageTabController(reportManager, selectedFile, applyFilters, filterList);
+            ImageTabController imageTabController = new ImageTabController(reportManager, executorService, selectedFile, applyFilters, filterList);
             fxmlLoader.setController(imageTabController);
             Tab newTab = new Tab(selectedFile.getName(), fxmlLoader.load());
             newTab.setUserData(imageTabController); // Store the controller in the tab for later access
@@ -250,5 +260,43 @@ public class MainController implements Initializable {
         Scene splashScene = new Scene(splashLayout);
         splashStage.setScene(splashScene);
         splashStage.show();
+    }
+
+    @FXML
+    public void modifyMaxThreadNumber() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Max Thread Number");
+        dialog.setHeaderText("Set the maximum number of threads for the executor service.\n"
+                            + "Actual value: " + maxThreadNumber + "\n"
+                            + "*This change will not be applied to current waiting tasks.");
+        dialog.setContentText("Enter the maximum number of threads:");
+        dialog.setGraphic(null); // Remove the default graphic icon
+        // Wait for the user to enter a number
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(number -> {
+            try {
+                int num = Integer.parseInt(number);
+                if (num <= 0) {
+                    throw new NumberFormatException("Number must be greater than 0.");
+                }
+                logger.info("Setting max thread number to: " + num);
+                maxThreadNumber = num;
+                ExecutorService newExecutorService = Executors.newFixedThreadPool(num);
+                // Assign the new executor service to the image tab controllers
+                for (Tab tab : imagesTabPane.getTabs()) {
+                    ImageTabController imageTabController = (ImageTabController) tab.getUserData();
+                    if (imageTabController != null) {
+                        imageTabController.updateExecutorService(newExecutorService);
+                    }
+                }
+                // Shutdown the old executor service
+                shutdownExecutorService();
+                // Set the new executor service
+                executorService = newExecutorService;
+            } catch (NumberFormatException e) {
+                logger.error("Invalid number format: " + number);
+                logger.debug(e.toString());
+            }
+        });
     }
 }
