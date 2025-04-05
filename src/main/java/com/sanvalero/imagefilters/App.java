@@ -20,6 +20,8 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * JavaFX App
@@ -27,6 +29,7 @@ import java.io.IOException;
 public class App extends Application {
     private static final Logger logger = LoggerFactory.getLogger(App.class);
 
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(4);
     private static Scene scene;
 
     @Override
@@ -64,7 +67,7 @@ public class App extends Application {
         // Load the FXML file
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("main.fxml"));
         // Set the controller for the FXML file
-        MainController mainController = new MainController();
+        MainController mainController = new MainController(executorService);
         fxmlLoader.setController(mainController);
         // Load the FXML file and set it as the scene
         try {
@@ -88,6 +91,12 @@ public class App extends Application {
     private static Parent loadFXML(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
         return fxmlLoader.load();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        executorService.shutdown();
+        super.stop();
     }
 
     public static void main(String[] args) {

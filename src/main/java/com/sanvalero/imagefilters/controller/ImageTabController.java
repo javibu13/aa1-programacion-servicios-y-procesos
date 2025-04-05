@@ -5,6 +5,8 @@ import com.sanvalero.imagefilters.filter.Filter;
 import com.sanvalero.imagefilters.filter.GrayscaleFilter;
 import com.sanvalero.imagefilters.filter.InvertColorsFilter;
 import com.sanvalero.imagefilters.report.ReportManager;
+// import com.sanvalero.imagefilters.task.FilterTask;
+import com.sanvalero.imagefilters.service.FilterService;
 import com.sanvalero.imagefilters.task.FilterTask;
 import com.sanvalero.imagefilters.task.ReportTask;
 
@@ -19,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
 
 import javax.imageio.ImageIO;
 
@@ -34,6 +37,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.concurrent.Worker;
 
 public class ImageTabController implements Initializable {
     // This class is responsible for managing the image tab and its filters
@@ -73,10 +77,12 @@ public class ImageTabController implements Initializable {
     private List<Filter> filterList = new ArrayList<>(); // List of filters to be applied to the image
     private String defaultFilePath = "user.home"; // Default file path to save the image
 
-    private FilterTask filterTask; // Task to apply the filters to the image
+    private FilterService filterService; // Service to apply filters to the image
 
-    public ImageTabController(ReportManager reportManager, File selectedFile, Boolean applyFiltersOnInitialize, List<Filter> filterList) {
+    public ImageTabController(ReportManager reportManager, ExecutorService executorService, File selectedFile, Boolean applyFiltersOnInitialize, List<Filter> filterList) {
         this.reportManager = reportManager;
+        this.filterService = new FilterService(); // Initialize the filter service
+        this.filterService.setExecutor(executorService); // Set the executor for the filter service
         this.selectedFile = selectedFile;
         this.filterList = filterList;
         this.applyFiltersOnInitialize = applyFiltersOnInitialize;
@@ -90,6 +96,44 @@ public class ImageTabController implements Initializable {
         tabFilter2.getItems().addAll("", "Grayscale", "Invert Colors", "Brightness");
         tabFilter3.getItems().addAll("", "Grayscale", "Invert Colors", "Brightness");
         tabFilterList = List.of(tabFilter1, tabFilter2, tabFilter3);
+        // Set bindings for Service to update the progress bar and label
+        tabProgressLabel.textProperty().bind(filterService.messageProperty());
+        tabProgressBar.progressProperty().bind(filterService.progressProperty());
+        filterService.stateProperty().addListener((obs, oldState, newState) -> {
+            Alert alert = null;
+            switch (newState) {
+                case RUNNING:
+                deactivateButtons();
+                break;
+                case SUCCEEDED:
+                logger.info("Filters applied successfully.");
+                createReport(); // Create the report after the filters are applied
+                tabImageEdited.setImage(SwingFXUtils.toFXImage(filterService.getValue(), null));
+                alert = new Alert(Alert.AlertType.INFORMATION, "Filters applied successfully to "+ selectedFile.getName() + ".");
+                alert.showAndWait();
+                reactivateButtons(); // Reactivate the buttons after the filters are applied
+                break;
+                case FAILED:
+                logger.error("Failed to apply filters: " + filterService.getException().getMessage());
+                alert = new Alert(Alert.AlertType.ERROR, "Failed to apply filters: " + filterService.getException().getMessage());
+                alert.showAndWait();
+                reactivateButtons();
+                break;
+                case CANCELLED:
+                // Avoid showing the alert if the task was cancelled by the restart method and oldState is not RUNNING
+                if (oldState != Worker.State.RUNNING) {
+                    reactivateButtons();
+                    return;
+                }
+                logger.warn("Filter task was cancelled.");
+                alert = new Alert(Alert.AlertType.WARNING, "Filter task was cancelled.");
+                alert.showAndWait();
+                reactivateButtons();
+                break;
+                default:
+                break;
+            }
+        });
         // Load the image into the ImageView
         tabImageOriginal.setImage(new Image(selectedFile.toURI().toString()));
         // Apply filters if the flag is set to true
@@ -110,45 +154,11 @@ public class ImageTabController implements Initializable {
 
     private void applyFilters() {
         logger.info("Applying filters to the image...");
-        // Create a new FilterTask to apply the filters to the image
+        // Set up the filter service with the selected filters and the image to be filtered
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(tabImageOriginal.getImage(), null);
-        filterTask = new FilterTask(bufferedImage, filterList);
-        // Set the progress bar and label to show the progress of the task
-        tabProgressLabel.textProperty().bind(filterTask.messageProperty());
-        tabProgressBar.progressProperty().bind(filterTask.progressProperty());
-        // Set the state of the buttons based on the state of the task
-        filterTask.stateProperty().addListener((obs, oldState, newState) -> {
-            Alert alert = null;
-            switch (newState) {
-                case RUNNING:
-                deactivateButtons();
-                break;
-                case SUCCEEDED:
-                logger.info("Filters applied successfully.");
-                createReport(); // Create the report after the filters are applied
-                tabImageEdited.setImage(SwingFXUtils.toFXImage(filterTask.getValue(), null));
-                alert = new Alert(Alert.AlertType.INFORMATION, "Filters applied successfully to "+ selectedFile.getName() + ".");
-                alert.showAndWait();
-                reactivateButtons(); // Reactivate the buttons after the filters are applied
-                break;
-                case FAILED:
-                logger.error("Failed to apply filters: " + filterTask.getException().getMessage());
-                alert = new Alert(Alert.AlertType.ERROR, "Failed to apply filters: " + filterTask.getException().getMessage());
-                alert.showAndWait();
-                reactivateButtons();
-                break;
-                case CANCELLED:
-                logger.warn("Filter task was cancelled.");
-                alert = new Alert(Alert.AlertType.WARNING, "Filter task was cancelled.");
-                alert.showAndWait();
-                reactivateButtons();
-                break;
-                default:
-                break;
-            }
-        });
-        // Start the task in a new thread
-        new Thread(filterTask).start();
+        filterService.setExecutionParameters(bufferedImage, filterList); // Set the parameters for the filter service
+        // Start the filter service to apply the filters
+        filterService.restart();
     }
 
     private void createReport() {
