@@ -29,7 +29,7 @@ import java.util.concurrent.Executors;
 public class App extends Application {
     private static final Logger logger = LoggerFactory.getLogger(App.class);
 
-    private static final ExecutorService executorService = Executors.newFixedThreadPool(4);
+    private static MainController mainController;
     private static Scene scene;
 
     @Override
@@ -67,7 +67,7 @@ public class App extends Application {
         // Load the FXML file
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("main.fxml"));
         // Set the controller for the FXML file
-        MainController mainController = new MainController(executorService);
+        mainController = new MainController();
         fxmlLoader.setController(mainController);
         // Load the FXML file and set it as the scene
         try {
@@ -95,7 +95,7 @@ public class App extends Application {
 
     @Override
     public void stop() throws Exception {
-        executorService.shutdown();
+        mainController.shutdownExecutorService();
         super.stop();
     }
 
