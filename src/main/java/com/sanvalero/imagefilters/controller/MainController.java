@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -47,6 +48,7 @@ public class MainController implements Initializable {
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
     private ReportManager reportManager = new ReportManager();
+    private ExecutorService executorService;
 
     @FXML
     private VBox rootVBox;
@@ -61,6 +63,10 @@ public class MainController implements Initializable {
 
     @FXML
     private TabPane imagesTabPane;
+
+    public MainController(ExecutorService executorService) {
+        this.executorService = executorService;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -139,7 +145,7 @@ public class MainController implements Initializable {
         logger.info("Creating image tab for: " + selectedFile.getName());
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("imageTab.fxml"));
-            ImageTabController imageTabController = new ImageTabController(reportManager, selectedFile, applyFilters, filterList);
+            ImageTabController imageTabController = new ImageTabController(reportManager, executorService, selectedFile, applyFilters, filterList);
             fxmlLoader.setController(imageTabController);
             Tab newTab = new Tab(selectedFile.getName(), fxmlLoader.load());
             newTab.setUserData(imageTabController); // Store the controller in the tab for later access
