@@ -4,6 +4,7 @@ import com.sanvalero.imagefilters.filter.BrightnessFilter;
 import com.sanvalero.imagefilters.filter.Filter;
 import com.sanvalero.imagefilters.filter.GrayscaleFilter;
 import com.sanvalero.imagefilters.filter.InvertColorsFilter;
+import com.sanvalero.imagefilters.filter.FilterStep;
 import com.sanvalero.imagefilters.report.ReportManager;
 import com.sanvalero.imagefilters.service.FilterService;
 import com.sanvalero.imagefilters.task.ReportTask;
@@ -74,8 +75,10 @@ public class ImageTabController implements Initializable {
     private Boolean applyFiltersOnInitialize; // Flag to indicate if filters should be applied on initialization
     private List<Filter> filterList = new ArrayList<>(); // List of filters to be applied to the image
     private String defaultFilePath = "user.home"; // Default file path to save the image
-
+    
     private FilterService filterService; // Service to apply filters to the image
+    private List<FilterStep> filterSteps = new ArrayList<>(); // List of steps processed by the filter service
+    private int currentFilterStepIndex = -1; // Index of the current filter step
 
     public ImageTabController(ReportManager reportManager, ExecutorService executorService, File selectedFile, Boolean applyFiltersOnInitialize, List<Filter> filterList) {
         this.reportManager = reportManager;
@@ -107,6 +110,18 @@ public class ImageTabController implements Initializable {
                 logger.info("Filters applied successfully.");
                 createReport(); // Create the report after the filters are applied
                 tabImageEdited.setImage(SwingFXUtils.toFXImage(filterService.getValue(), null));
+                // Create step to save the current original and edited images
+                if (currentFilterStepIndex >= 0) {
+                    if (filterSteps.size() - 1 != currentFilterStepIndex) {
+                        // Remove all steps after the current step
+                        filterSteps.subList(currentFilterStepIndex + 1, filterSteps.size()).clear();
+                    }
+                } else {
+                    currentFilterStepIndex = 0; // Reset the index if it's the first step
+                }
+                filterSteps.add(new FilterStep(tabImageOriginal.getImage(), tabImageEdited.getImage()));
+                currentFilterStepIndex = filterSteps.size() - 1; // Update the index to the last step
+                // Show success alert
                 alert = new Alert(Alert.AlertType.INFORMATION, "Filters applied successfully to "+ selectedFile.getName() + ".");
                 alert.showAndWait();
                 reactivateButtons(); // Reactivate the buttons after the filters are applied
@@ -184,9 +199,16 @@ public class ImageTabController implements Initializable {
 
     private void reactivateButtons() {
         tabApplyBtn.setDisable(false);
-        // TODO: Set the undo and redo buttons to be enabled only if there are historical changes
-        // tabUndoBtn.setDisable(false);
-        // tabRedoBtn.setDisable(false);
+        if (currentFilterStepIndex > 0) {
+            tabUndoBtn.setDisable(false);
+        } else {
+            tabUndoBtn.setDisable(true);
+        }
+        if (currentFilterStepIndex < filterSteps.size() - 1) {
+            tabRedoBtn.setDisable(false);
+        } else {
+            tabRedoBtn.setDisable(true);
+        }
         tabSaveBtn.setDisable(false);
     }
 
@@ -261,6 +283,36 @@ public class ImageTabController implements Initializable {
             } catch (IOException e) {
                 logger.error("Error saving image: " + e.getMessage());
             }
+        }
+    }
+
+    @FXML
+    private void undo(ActionEvent event) {
+        // Change to the previous filter step
+        logger.info("Undoing last filter step...");
+        if (currentFilterStepIndex > 0) {
+            currentFilterStepIndex--;
+            tabImageOriginal.setImage(filterSteps.get(currentFilterStepIndex).getOriginalImage());
+            tabImageEdited.setImage(filterSteps.get(currentFilterStepIndex).getResultImage());
+            logger.info("Undo successful. Current step index: " + currentFilterStepIndex);
+            reactivateButtons(); // Reactivate buttons after undo to update their state
+        } else {
+            logger.warn("No more steps to undo.");
+        }
+    }
+
+    @FXML
+    private void redo(ActionEvent event) {
+        // Change to the next filter step
+        logger.info("Redoing last filter step...");
+        if (currentFilterStepIndex < filterSteps.size() - 1) {
+            currentFilterStepIndex++;
+            tabImageOriginal.setImage(filterSteps.get(currentFilterStepIndex).getOriginalImage());
+            tabImageEdited.setImage(filterSteps.get(currentFilterStepIndex).getResultImage());
+            logger.info("Redo successful. Current step index: " + currentFilterStepIndex);
+            reactivateButtons(); // Reactivate buttons after redo to update their state
+        } else {
+            logger.warn("No more steps to redo.");
         }
     }
 
