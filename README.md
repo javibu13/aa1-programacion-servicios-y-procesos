@@ -25,7 +25,7 @@ guardar en el disco. Además, la aplicación permitirá visualizar la versión p
 ### Requisitos opcionales
 ✅ 1. En lugar de la clase Task, se utilizará la clase Service para la ejecución concurrente. Además, se hará uso de las clases Executors y ExecutorService para crear un pool de threads.
 
-⬜ 2. La aplicación dejará configurar un número máximo de imágenes procesadas de manera simultánea. De manera que si se excede ese
+✅ 2. La aplicación dejará configurar un número máximo de imágenes procesadas de manera simultánea. De manera que si se excede ese
 número, el resto de imágenes quedarán encoladas y se procesarán a medida que se acaben procesamientos anteriores.
 
 ⬜ 3. La aplicación permitirá deshacer los filtros aplicados o rehacerlos en el caso de haberlos deshecho.
