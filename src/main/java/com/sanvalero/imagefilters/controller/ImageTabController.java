@@ -272,4 +272,9 @@ public class ImageTabController implements Initializable {
         logger.info("Default file path updated to: " + newPath);
     }
 
+    public void updateExecutorService(ExecutorService executorService) {
+        this.filterService.setExecutor(executorService); // Update the executor service for the filter service
+        logger.info("Executor service updated.");
+    }
+
 }
