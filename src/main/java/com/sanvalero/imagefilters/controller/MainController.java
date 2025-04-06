@@ -49,6 +49,7 @@ public class MainController implements Initializable {
     private ReportManager reportManager = new ReportManager();
     private int maxThreadNumber = 2; // Default value, can be changed by the user
     private ExecutorService executorService = Executors.newFixedThreadPool(maxThreadNumber);
+    private List<ExecutorService> executorServices = new ArrayList<>();
 
     @FXML
     private VBox rootVBox;
@@ -68,11 +69,19 @@ public class MainController implements Initializable {
     private TabPane imagesTabPane;
 
     public void shutdownExecutorService() {
-        if (executorService != null && !executorService.isShutdown()) {
-            executorService.shutdown();
-            logger.info("Executor service shut down.");
+        executorServices.add(executorService);
+        logger.info("Shutting down executor service...");
+        if (executorServices.size() > 0) {
+            for (ExecutorService executor : executorServices) {
+                if (executor != null && !executor.isShutdown()) {
+                    executor.shutdown();
+                    logger.info("Executor service shut down.");
+                } else {
+                    logger.warn("Executor service is already shut down or null.");
+                }
+            }
         } else {
-            logger.warn("Executor service is already shut down or null.");
+            logger.warn("No executor services to shut down.");
         }
     }
 
@@ -319,15 +328,18 @@ public class MainController implements Initializable {
                 logger.info("Setting max thread number to: " + num);
                 maxThreadNumber = num;
                 ExecutorService newExecutorService = Executors.newFixedThreadPool(num);
-                // Assign the new executor service to the image tab controllers
+                // Assign the new executor service to the image tab controllers and exclude the video tab controllers
                 for (Tab tab : imagesTabPane.getTabs()) {
+                    if (tab.getUserData() instanceof VideoTabController) {
+                        continue; // Skip video tabs
+                    }
                     ImageTabController imageTabController = (ImageTabController) tab.getUserData();
                     if (imageTabController != null) {
                         imageTabController.updateExecutorService(newExecutorService);
                     }
                 }
-                // Shutdown the old executor service
-                shutdownExecutorService();
+                // Store executor service for future use
+                executorServices.add(executorService);
                 // Set the new executor service
                 executorService = newExecutorService;
             } catch (NumberFormatException e) {
