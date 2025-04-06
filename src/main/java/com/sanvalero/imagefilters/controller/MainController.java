@@ -29,6 +29,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
@@ -52,6 +53,9 @@ public class MainController implements Initializable {
     @FXML
     private VBox rootVBox;
 
+    @FXML
+    private MenuItem openVideoMenuBtn;
+
     private List<ChoiceBox<String>> mainFilterList = new ArrayList<>();
     @FXML
     private ChoiceBox<String> mainFilter1;
@@ -74,6 +78,13 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        logger.info("Initializing MainController...");
+        if (App.isVideoProcessingSupported()) {
+            logger.info("Video processing is supported.");
+        } else {
+            logger.warn("Video processing is not supported.");
+            openVideoMenuBtn.setDisable(true);
+        }
         mainFilter1.getItems().addAll("", "Grayscale", "Invert Colors", "Brightness");
         mainFilter2.getItems().addAll("", "Grayscale", "Invert Colors", "Brightness");
         mainFilter3.getItems().addAll("", "Grayscale", "Invert Colors", "Brightness");
@@ -143,6 +154,18 @@ public class MainController implements Initializable {
                 logger.info("No image files found in the folder.");
             }
         }
+    }
+
+    @FXML
+    private void openVideo(ActionEvent event) {
+        logger.info("Opening video...");
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(
+            new FileChooser.ExtensionFilter("Videos", "*.mp4", "*.avi", "*.mov", "*.mkv")
+        );
+        File selectedFile = fileChooser.showOpenDialog(rootVBox.getScene().getWindow());
+        
+        // TODO: Implement video processing functionality
     }
     
     private void createImageTab(File selectedFile, Boolean applyFilters, List<Filter> filterList) {
