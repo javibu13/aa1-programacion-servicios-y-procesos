@@ -15,17 +15,30 @@ import javafx.concurrent.Task;
 public class FilterService extends Service<BufferedImage> {
     private static final Logger logger = LoggerFactory.getLogger(FilterService.class);
 
+    private final int id;
     private BufferedImage prevImage;
     private List<Filter> filters;
 
     public FilterService() {
+        this.id = 0;
         this.prevImage = null;
         this.filters = null;   
     }
-
+    
     public FilterService(BufferedImage prevImage, List<Filter> filters) {
+        this.id = 0;
         this.prevImage = prevImage;
         this.filters = filters;
+    }
+
+    public FilterService(int id, BufferedImage prevImage, List<Filter> filters) {
+        this.id = id;
+        this.prevImage = prevImage;
+        this.filters = filters;
+    }
+
+    public int getId() {
+        return id;
     }
     
     public void setExecutionParameters(BufferedImage prevImage, List<Filter> filters) {

@@ -34,6 +34,13 @@ A elegir una de estas opciones:
 - Volver al estado previo de la imagen
 - (SELECTED) Volver a cualquier estado anterior de la imagen
 
-⬜ 4. La aplicación también permite el uso de filtros en vídeos. En este caso, no hace falta mostrar los vídeos en la interfaz gráfica. Sólo seleccionar un vídeo, el filtro a utilizar y el vídeo procesado se guardará automáticamente en un directorio con un nombre distinto al vídeo original. Cada frame del vídeo se procesará por un hilo de manera concurrente.
+✅ 4. La aplicación también permite el uso de filtros en vídeos. En este caso, no hace falta mostrar los vídeos en la interfaz gráfica. Sólo seleccionar un vídeo, el filtro a utilizar y el vídeo procesado se guardará automáticamente en un directorio con un nombre distinto al vídeo original. Cada frame del vídeo se procesará por un hilo de manera concurrente.
 
-⬜ 5. Realizar el seguimiento del proyecto utilizando la plataforma GitHub para almacenar el código y gestionando las issues (bug, mejoras, etc) a medida que se vaya trabajando en él. Al menos tiene que haber 2 ramas: main y develop. También puede haber Issues y ramas correspondientes.
+✅ 5. Realizar el seguimiento del proyecto utilizando la plataforma GitHub para almacenar el código y gestionando las issues (bug, mejoras, etc) a medida que se vaya trabajando en él. Al menos tiene que haber 2 ramas: main y develop. También puede haber Issues y ramas correspondientes.
+
+## Requisitos de instalación
+Se debe descargar OpenCV https://opencv.org/releases/ y copiar el archivo opencv-xxx.jar en la carpeta libs de la raíz del proyecto. También se debe especificar la ruta de la extracción de OpenCV en el archivo App.java del proyecto. Para ello, se debe modificar la línea:
+```java
+System.load("D:/opencv/build/java/x64/opencv_java4110.dll");
+```
+Si no se aplican estos requisitos, la aplicación no funcionará correctamente. La funcionalidad relativa a los vídeos no estrá disponible.

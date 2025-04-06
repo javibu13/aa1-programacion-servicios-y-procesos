@@ -29,6 +29,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
@@ -48,9 +49,13 @@ public class MainController implements Initializable {
     private ReportManager reportManager = new ReportManager();
     private int maxThreadNumber = 2; // Default value, can be changed by the user
     private ExecutorService executorService = Executors.newFixedThreadPool(maxThreadNumber);
+    private List<ExecutorService> executorServices = new ArrayList<>();
 
     @FXML
     private VBox rootVBox;
+
+    @FXML
+    private MenuItem openVideoMenuBtn;
 
     private List<ChoiceBox<String>> mainFilterList = new ArrayList<>();
     @FXML
@@ -64,16 +69,31 @@ public class MainController implements Initializable {
     private TabPane imagesTabPane;
 
     public void shutdownExecutorService() {
-        if (executorService != null && !executorService.isShutdown()) {
-            executorService.shutdown();
-            logger.info("Executor service shut down.");
+        executorServices.add(executorService);
+        logger.info("Shutting down executor service...");
+        if (executorServices.size() > 0) {
+            for (ExecutorService executor : executorServices) {
+                if (executor != null && !executor.isShutdown()) {
+                    executor.shutdown();
+                    logger.info("Executor service shut down.");
+                } else {
+                    logger.warn("Executor service is already shut down or null.");
+                }
+            }
         } else {
-            logger.warn("Executor service is already shut down or null.");
+            logger.warn("No executor services to shut down.");
         }
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        logger.info("Initializing MainController...");
+        if (App.isVideoProcessingSupported()) {
+            logger.info("Video processing is supported.");
+        } else {
+            logger.warn("Video processing is not supported.");
+            openVideoMenuBtn.setDisable(true);
+        }
         mainFilter1.getItems().addAll("", "Grayscale", "Invert Colors", "Brightness");
         mainFilter2.getItems().addAll("", "Grayscale", "Invert Colors", "Brightness");
         mainFilter3.getItems().addAll("", "Grayscale", "Invert Colors", "Brightness");
@@ -141,6 +161,32 @@ public class MainController implements Initializable {
                 }
             } else {
                 logger.info("No image files found in the folder.");
+            }
+        }
+    }
+
+    @FXML
+    private void openVideo(ActionEvent event) {
+        logger.info("Opening video...");
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(
+            new FileChooser.ExtensionFilter("Videos", "*.mp4", "*.avi", "*.mov", "*.mkv")
+        );
+        File selectedFile = fileChooser.showOpenDialog(rootVBox.getScene().getWindow());
+        if (selectedFile != null) {
+            logger.info("Selected video: " + selectedFile.getAbsolutePath());
+            List<Filter> filterList = getSelectedFilters();
+            // Create a new tab for the video processing
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("videoTab.fxml"));
+                VideoTabController videoTabController = new VideoTabController(reportManager, executorService, selectedFile, true, filterList); // Change true by variable applyFilters if needed or implemented in the future
+                fxmlLoader.setController(videoTabController);
+                Tab newTab = new Tab(selectedFile.getName(), fxmlLoader.load());
+                newTab.setUserData(videoTabController); // Store the controller in the tab for later access
+                imagesTabPane.getTabs().add(newTab);
+                logger.info("Video tab created for: " + selectedFile.getName());
+            } catch (Exception e) {
+                logger.error("Error creating video tab: " + e.getMessage(), e);
             }
         }
     }
@@ -282,15 +328,18 @@ public class MainController implements Initializable {
                 logger.info("Setting max thread number to: " + num);
                 maxThreadNumber = num;
                 ExecutorService newExecutorService = Executors.newFixedThreadPool(num);
-                // Assign the new executor service to the image tab controllers
+                // Assign the new executor service to the image tab controllers and exclude the video tab controllers
                 for (Tab tab : imagesTabPane.getTabs()) {
+                    if (tab.getUserData() instanceof VideoTabController) {
+                        continue; // Skip video tabs
+                    }
                     ImageTabController imageTabController = (ImageTabController) tab.getUserData();
                     if (imageTabController != null) {
                         imageTabController.updateExecutorService(newExecutorService);
                     }
                 }
-                // Shutdown the old executor service
-                shutdownExecutorService();
+                // Store executor service for future use
+                executorServices.add(executorService);
                 // Set the new executor service
                 executorService = newExecutorService;
             } catch (NumberFormatException e) {
