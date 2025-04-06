@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sanvalero.imagefilters.filter.Filter;
-import com.sanvalero.imagefilters.filter.FilterStep;
 import com.sanvalero.imagefilters.report.ReportManager;
 import com.sanvalero.imagefilters.service.FilterService;
 import com.sanvalero.imagefilters.service.VideoReadService;
@@ -25,18 +24,12 @@ import java.util.concurrent.locks.Lock;
 
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.videoio.VideoCapture;
-import org.opencv.videoio.VideoWriter;
-import org.opencv.videoio.Videoio;
-import org.opencv.core.Size;
 import javafx.concurrent.Worker;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.image.Image;
 
 public class VideoTabController implements Initializable {
     // This class is responsible for managing the video tab and its filters
@@ -53,7 +46,6 @@ public class VideoTabController implements Initializable {
     private File selectedFile;
     private List<Filter> filterList;
     private Boolean applyFiltersOnInitialize;
-    private String defaultFilePath;
     private int totalFrames;
     private Lock lockMatFramesMap = new java.util.concurrent.locks.ReentrantLock();
     private Map<Integer, Mat> matFramesMap = new HashMap<>();
@@ -66,7 +58,6 @@ public class VideoTabController implements Initializable {
         this.selectedFile = selectedFile;
         this.filterList = filterList;
         this.applyFiltersOnInitialize = applyFiltersOnInitialize;
-        this.defaultFilePath = selectedFile.getParent(); // Set the default file path to the directory of the selected file
     }
 
     @Override
