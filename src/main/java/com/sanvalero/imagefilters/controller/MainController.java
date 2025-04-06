@@ -164,8 +164,22 @@ public class MainController implements Initializable {
             new FileChooser.ExtensionFilter("Videos", "*.mp4", "*.avi", "*.mov", "*.mkv")
         );
         File selectedFile = fileChooser.showOpenDialog(rootVBox.getScene().getWindow());
-        
-        // TODO: Implement video processing functionality
+        if (selectedFile != null) {
+            logger.info("Selected video: " + selectedFile.getAbsolutePath());
+            List<Filter> filterList = getSelectedFilters();
+            // Create a new tab for the video processing
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("videoTab.fxml"));
+                VideoTabController videoTabController = new VideoTabController(reportManager, executorService, selectedFile, true, filterList); // Change true by variable applyFilters if needed or implemented in the future
+                fxmlLoader.setController(videoTabController);
+                Tab newTab = new Tab(selectedFile.getName(), fxmlLoader.load());
+                newTab.setUserData(videoTabController); // Store the controller in the tab for later access
+                imagesTabPane.getTabs().add(newTab);
+                logger.info("Video tab created for: " + selectedFile.getName());
+            } catch (Exception e) {
+                logger.error("Error creating video tab: " + e.getMessage(), e);
+            }
+        }
     }
     
     private void createImageTab(File selectedFile, Boolean applyFilters, List<Filter> filterList) {
