@@ -49,6 +49,7 @@ public class FilterTask extends Task<BufferedImage> {
         // Update the progress of the task
         updateProgress(processedPixels, imageSize);
         // Update the message to show that the task is finished
+        logger.info("Filters applied successfully.");
         updateMessage("Done!");
         return filteredImage;
     }

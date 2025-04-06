@@ -53,7 +53,7 @@
             <MenuItem fx:id="openSingleImageMenuBtn" mnemonicParsing="false" onAction="#openSingleImage" text="Single image..." />
             <MenuItem fx:id="openMultipleImagesMenuBtn" mnemonicParsing="false" onAction="#openMultipleImages" text="Multiple images..." />
             <MenuItem fx:id="openImagesFromFolderMenuBtn" mnemonicParsing="false" onAction="#openImagesFromFolder" text="Folder..." />
-                  <MenuItem fx:id="openVideoMenuBtn" disable="true" mnemonicParsing="false" text="Video..." />
+            <MenuItem fx:id="openVideoMenuBtn" mnemonicParsing="false" onAction="#openVideo" text="Video..." />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Edit">

@@ -10,6 +10,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -27,6 +28,11 @@ public class App extends Application {
 
     private static MainController mainController;
     private static Scene scene;
+    private static Boolean videoProcessingSupported = false;
+
+    public static Boolean isVideoProcessingSupported() {
+        return videoProcessingSupported;
+    }
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -48,6 +54,9 @@ public class App extends Application {
         Scene splashScene = new Scene(splashLayout);
         splashStage.setScene(splashScene);
         splashStage.show();
+        
+        // Try to load the OpenCV library
+        initOpenCV();
 
         // Simulate a delay for the splash screen
         PauseTransition delay = new PauseTransition(Duration.seconds(2));
@@ -87,6 +96,28 @@ public class App extends Application {
     private static Parent loadFXML(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
         return fxmlLoader.load();
+    }
+
+    private void initOpenCV() {
+        try {
+            System.load("D:/opencv/build/java/x64/opencv_java4110.dll");
+            logger.info("OpenCV library loaded successfully.");
+            videoProcessingSupported = true;
+        } catch (UnsatisfiedLinkError e) {
+            logger.error("OpenCV library not found");
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("OpenCV Library Not Found");
+            alert.setContentText("The OpenCV library was not found. Please check the library path.\n*Video processing will not work.");
+            alert.showAndWait();
+        } catch (Exception e) {
+            logger.error("An error occurred while loading OpenCV library");
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("OpenCV Library Error");
+            alert.setContentText("An error occurred while loading the OpenCV library. Please check the library path.\n*Video processing will not work.");
+            alert.showAndWait();
+        }
     }
 
     @Override
